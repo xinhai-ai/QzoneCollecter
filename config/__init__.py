@@ -14,6 +14,8 @@ if not config.has_key("AutoRefresh"):
     config.setConfig("AutoRefresh", True)
 if not config.has_key("TimeSleep"):
     config.setConfig("TimeSleep", 150)
+if not config.has_key("DisableNotification"):
+    config.setConfig("DisableNotification", True)
 if not config.has_key("cookies"):
     config.setConfig("cookies", {})
     config.load()

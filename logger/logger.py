@@ -9,7 +9,7 @@ if not os.path.exists(gvar.get_value("path")+r'/logs/'):
     os.makedirs(gvar.get_value("path")+r'/logs/')
 
 log_colors_config = {
-    # ÷’∂À ‰≥ˆ»’÷æ—’…´≈‰÷√
+    # ÁªàÁ´ØËæìÂá∫Êó•ÂøóÈ¢úËâ≤ÈÖçÁΩÆ
     'DEBUG': 'white',
     'INFO': 'cyan',
     'WARNING': 'yellow',
@@ -45,15 +45,15 @@ logger.addHandler(fhlr)
 
 
 def DisableConsole():
-    global logger
-    LOG_FORMAT = "[%(asctime)s] - %(levelname)s - %(message)s"
-    del logger
-    logger = logging.getLogger()
-    logger.setLevel('DEBUG')
-    fhlr = logging.handlers.RotatingFileHandler(gvar.get_value("path") + r'/logs/log.log', maxBytes=5 * 1024 * 1024,
-                                                backupCount=3,
-                                                encoding="utf-8")
-
-    fhlr.setLevel("DEBUG")
-    fhlr.setFormatter(logging.Formatter(LOG_FORMAT))
-    logger.addHandler(fhlr)
+    logging.disable()
+    # global logger
+    # LOG_FORMAT = "[%(asctime)s] - %(levelname)s - %(message)s"
+    # logger = logging.getLogger()
+    # logger.setLevel('DEBUG')
+    # fhlr = logging.handlers.RotatingFileHandler(gvar.get_value("path") + r'/logs/log.log', maxBytes=5 * 1024 * 1024,
+    #                                             backupCount=3,
+    #                                             encoding="utf-8")
+    #
+    # fhlr.setLevel("DEBUG")
+    # fhlr.setFormatter(logging.Formatter(LOG_FORMAT))
+    # logger.addHandler(fhlr)

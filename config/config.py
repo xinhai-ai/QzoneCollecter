@@ -1,7 +1,10 @@
 import configparser
 import os
 import json
+import time
+
 from controller import gvar
+from logger import logger
 
 path = os.path.split(os.path.realpath(__file__))[0] + '/db.conf'
 
@@ -44,3 +47,14 @@ def load():
     config.read(path, encoding="utf-8")
     for i in config["config"].keys():
         gvar.set_value(i, json.loads(config["config"][i]))
+
+def show_config():
+    time.sleep(0.2)
+    logger.logger.info("排除点赞个数: "+str(len(getConfig("likeunincluded"))))
+    time.sleep(0.2)
+    logger.logger.info("禁用系统消息: "+str(getConfig("disablenotification")))
+    time.sleep(0.2)
+    logger.logger.info("自动刷新已有动态: "+str(getConfig("autorefresh")))
+    time.sleep(0.2)
+    logger.logger.info("刷新间隔: "+str(getConfig("timesleep"))+"秒")
+    

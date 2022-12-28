@@ -65,7 +65,7 @@ def Video_process(bs_in):
         video_tag = bs.new_tag("video")
         video_tag.attrs["width"] = "480"
         video_tag.attrs["height"] = "360"
-        video_tag.attrs["src"] = "/videos/" + key + ".mp4"
+        video_tag.attrs["src"] = "./medias/" + key + ".mp4"
         video_tag.attrs["controls"] = "controls"
         div.insert(0, video_tag)
         return str(bs)
@@ -81,11 +81,11 @@ def get_media_name(md_text):
     bs = bs4.BeautifulSoup(md_text, 'html.parser')
     for i in bs.find_all("img"):
         key = str(i["src"])
-        image_list.append(key[key.find("images/") + 7:])
+        image_list.append(key[key.find("medias/") + 7:])
     video_list = []
     for i in bs.find_all("video"):
         key = str(i["src"])
-        video_list.append(key[key.find("videos/") + 7:])
+        video_list.append(key[key.find("medias/") + 7:])
     return image_list, video_list
 
 
@@ -109,7 +109,7 @@ def process_img(html_text):
                 controller.pool.pool_submit(Img_Download, url)
                 # data_base64 = base64.b64encode(data)
                 # i["src"] = "data:image/jpg;base64," + str(data_base64)[2:len(str(data_base64)) - 1]
-                i["src"] = "/images/" + single_key
+                i["src"] = "./medias/" + single_key
             except:
                 continue
 
@@ -127,9 +127,9 @@ def process_img(html_text):
                 single_key = hashlib.md5(url.encode(encoding='utf-8')).hexdigest()
             # data_base64 = base64.b64encode(data)
             # img_tag.attrs = {"src": "data:image/jpg;base64," + str(data_base64)[2:len(str(data_base64)) - 1]}
-            img_tag.attrs["src"] = "/images/" + single_key
+            img_tag.attrs["src"] = "./medias/" + single_key
             bss_thumbnails[i].append(img_tag)
-        logger.logger.debug("图像处理完成:" + " 处理时间:" + f"{time.perf_counter() * 1000 - t:.8f}ms")
+        #logger.logger.debug("图像处理完成:" + " 处理时间:" + f"{time.perf_counter() * 1000 - t:.8f}ms")
         div = bs.find_all("div", attrs={"class": "img-box f-video-wrap play"})
         if len(div) != 0:
             return Video_process(str(bs))
@@ -166,7 +166,7 @@ def tag_clear(html):
     return bs
 
 
-def Handle(html, uin, nickname, key, abstime):
+def Handle(html, uin, nickname, key, abstime,extra=True):
     try:
         aPost = Structor.Post()
         aPost.key = key
@@ -175,7 +175,6 @@ def Handle(html, uin, nickname, key, abstime):
         aPost.uin = uin
         bs = bs4.BeautifulSoup(html, features="html.parser")
         a_s = bs.find_all("a")
-
         for index in range(len(a_s)):
             if "data-cmd" in a_s[index].attrs.keys():
                 if a_s[index]["data-cmd"] == "qz_toggle":
@@ -215,8 +214,11 @@ def Handle(html, uin, nickname, key, abstime):
         medias.extend(tmp[1])
         medias.extend(get_media_name(aPost.comments)[0])
         aPost.medias = json.dumps(medias)
+        if extra:
+            extraHandler.Main(aPost)
         gvar.get_value("db").insert(aPost)
-        extraHandler.Main(aPost)
+
     except:
         logger.logger.error(traceback.format_exc())
+        logger.logger.debug(html)
         return

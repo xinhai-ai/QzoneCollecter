@@ -12,14 +12,14 @@ def deleteFromRunning(future):
     global running
     running.remove(future)
 
-
 def pool_submit(*kwg):
     global running
-    if len(running) >= 100:
+    if len(running) >= 200:
         logger.logger.logger.warning("触发线程池上限...")
-    while len(running) >= 100:
+    while len(running) >= 200:
         time.sleep(0.1)
     future = pool.submit(*kwg)
+
     running.append(future)
     future.add_done_callback(deleteFromRunning)
 

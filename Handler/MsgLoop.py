@@ -1,5 +1,5 @@
 import time
-
+import json
 import controller.control
 from controller import pool
 import bs4
@@ -40,6 +40,21 @@ def Msg_Process_Handle(controler, extraparam="", BeginTime=""):
     except Exception as e:
         logger.logger.debug(Msg)
         logger.logger.error("解析出错" + repr(e))
+        try:
+
+            reson = json.loads(Msg.replace("_Callback(", "").replace(");", "").replace("\n", ""))
+            if reson["code"] == -3000:
+                logger.logger.error("登录过期:需要重新登录")
+                controller.control.ExitRequests("", "")
+            if reson["code"] == -10001:
+                logger.logger.warning("网络繁忙，将重试")
+                time.sleep(5)
+                Msg_Process_Handle(controler, extraparam, BeginTime)
+            logger.logger.debug("原因:" + reson)
+        except:
+            pass
+            # logger.logger.error("原因查看日志文件")
+
         return True
     if controler == 1:
         FirstTime = int(abstime)
@@ -74,10 +89,10 @@ def Msg_Process_Handle(controler, extraparam="", BeginTime=""):
 
 
 def Loop_Start():
+    config.show_config()
     while controller.control.RunningFlag:
         Msg_Process_Handle(1)
-        for i in range(int(config.getConfig("timesleep"))//1):
+        for i in range(int(config.getConfig("timesleep")) // 1):
             if not controller.control.RunningFlag:
                 break
             time.sleep(1)
-

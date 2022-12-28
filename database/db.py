@@ -7,9 +7,9 @@ from controller import Structor
 from logger import logger
 
 class DB:
-    if not os.path.exists(gvar.get_value("path") + "\\database\\Data\\"):
-        os.makedirs(gvar.get_value("path") + "\\database\\Data\\")
-    db = sqlite3.connect(gvar.get_value("path") + "\\database\\Data\\Posts.db")
+    if not os.path.exists(gvar.get_value("path") + "\\archives\\Data\\"):
+        os.makedirs(gvar.get_value("path") + "\\archives\\Data\\")
+    db = sqlite3.connect(gvar.get_value("path") + "\\archives\\Data\\Posts.db")
     c = db.cursor()
     sql = """CREATE TABLE IF NOT EXISTS Posts (key, nickname, uin, content,comments,medias,creat_time,modify_time)"""
     c.execute(sql)
@@ -21,16 +21,18 @@ class DB:
     def insert(self, data: Structor):
         try:
             cursor = self.db.cursor()
+            content = str(data.content)
+            content = content.replace(".","点")
             if self.exists(data.key):
                 sql = f"""
                 update Posts
-                set nickname='{data.nickname}',content='{data.content}',comments='{data.comments}',medias='{data.medias}',modify_time={data.modify_time}
+                set nickname='{data.nickname}',content='{content}',comments='{data.comments}',medias='{data.medias}',modify_time={data.modify_time}
                 where key='{data.key}'
 """
             else:
                 sql = f"""
                     INSERT INTO Posts (key, nickname, uin, content,comments,medias,creat_time,modify_time)
-                    VALUES ('{data.key}','{data.nickname}','{data.uin}','{data.content}','{data.comments}','{data.medias}',{data.creat_time},{data.modify_time})
+                    VALUES ('{data.key}','{data.nickname}','{data.uin}','{content}','{data.comments}','{data.medias}',{data.creat_time},{data.modify_time})
                     
                     """
             cursor.execute(sql)

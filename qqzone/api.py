@@ -10,6 +10,7 @@ import urllib3
 import requests
 
 import config.config
+import controller.control
 from controller import gvar
 from selenium import webdriver
 from logger import logger
@@ -23,7 +24,7 @@ client.headers.update(headers)
 
 
 def update_cookies():
-    if gvar.get_value("cookies") =={}:
+    if gvar.get_value("cookies") == {}:
         return
     cookies = requests.utils.cookiejar_from_dict(gvar.get_value("cookies"))
     client.cookies = cookies
@@ -31,9 +32,8 @@ def update_cookies():
     skey = cookies['skey']
     uin = cookies['uin'].replace('o', '')
     g_tk = getNewGTK(pskey, skey, None)
-    gvar.set_value("g_tk",g_tk)
-    gvar.set_value("uin",uin)
-
+    gvar.set_value("g_tk", g_tk)
+    gvar.set_value("uin", uin)
 
 
 def LongToInt(value):  # 由于int+int超出范围后自动转为long型，通过这个转回来
@@ -120,17 +120,25 @@ def Msg_Get(extraparam="", BeginTime=""):
         "begintime": BeginTime,
         "externparam": extraparam
     }
-    try:
-        result = client.get(
-            url='https://user.qzone.qq.com/proxy/domain/ic2.qzone.qq.com/cgi-bin/feeds/feeds3_html_more',
-            params=params, verify=False)
-    except:
-        logger.logger.error(traceback.format_exc())
-        return ""
-    if result.status_code == 403:
-        return ""
-    else:
-        return result.text
+    setnum = 1
+    while 1:
+        try:
+            result = client.get(
+                url='https://user.qzone.qq.com/proxy/domain/ic2.qzone.qq.com/cgi-bin/feeds/feeds3_html_more',
+                params=params, verify=False, stream=True)
+
+            if result.status_code == 403:
+                return ""
+            else:
+                return result.text
+        except:
+            logger.logger.debug(str(sys.exc_info()[1]) + " 重连" + str(setnum) + "次")
+            setnum += 1
+            if setnum > 10:
+                logger.logger.critical("重连过多，请求退出")
+                controller.control.ExitRequests("", "")
+            time.sleep(1)
+            continue
 
 
 def get_file(path):
@@ -141,6 +149,37 @@ def get_file(path):
         for name in dirs:
             os.path.join(root, name)
     return all_files
+
+
+def get_one_zone(uin, start: int = 0, count: int = 10):
+    global client
+    params = {
+        "uin": gvar.get_value("uin"),
+        "hostuin": uin,
+        "filter": "all",
+        "start": start,
+        "count": count,
+        "r": str(random.uniform(0.1, 0.9)),
+        "g_tk": gvar.get_value("g_tk")
+    }
+    setnum = 1
+    while 1:
+        try:
+            resp = client.get(
+                "https://user.qzone.qq.com/proxy/domain/ic2.qzone.qq.com/cgi-bin/feeds/feeds_html_act_all",
+                params=params, verify=False)
+            if resp.status_code == 403:
+                logger.logger.error("登录失效")
+                controller.control.ExitRequests("", "")
+            return resp.text
+        except:
+            logger.logger.debug(str(sys.exc_info()[1]) + " 重连" + str(setnum) + "次")
+            setnum += 1
+            if setnum > 10:
+                logger.logger.critical("重连过多，请求退出")
+                controller.control.ExitRequests("", "")
+            time.sleep(1)
+            continue
 
 
 def Check_Details(uin, mood):
@@ -220,8 +259,8 @@ def get_info():
         url = "https://user.qzone.qq.com/2976024458/profile/qzbase"
         global client
         html = client.get(url).text
-        first = html.find("ProfileSummary")+15
-        second = html.find("g_isOFP")-3
+        first = html.find("ProfileSummary") + 15
+        second = html.find("g_isOFP") - 3
         info = html[first:second]
         return json.loads(info)
     except:
