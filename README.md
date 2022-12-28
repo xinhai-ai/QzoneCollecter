@@ -8,7 +8,7 @@
 
 
 <br>
-##Clone 
+## Clone 
 
 ```
 git clone https://github.com/xinhai-ai/QzoneCollecter.git
@@ -21,14 +21,11 @@ cd QzoneCollecter
 pip -r requirements.txt
 ```
 
-###安装浏览器
+### 安装浏览器
 
 由于登录时需要浏览器模拟登录，接下来需要安装浏览器
 
 默认使用Chrome
 
-####如果需要其他浏览器，可在qqzone/api.py中的Login()函数中更改
-
-在https://www.google.com/chrome/中下载
-
+#### 如果需要其他浏览器，可在qqzone/api.py中的Login()函数中更改
 
