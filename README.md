@@ -29,3 +29,5 @@ pip -r requirements.txt
 
 #### 如果需要其他浏览器，可在qqzone/api.py中的Login()函数中更改
 
+ 在[Chrome浏览器](https://www.google.com/chrome/ "chrome浏览器")中下载并安装
+ 
