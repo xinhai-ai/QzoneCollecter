@@ -7,7 +7,6 @@
 <p>
 
 
-<br>
 ## Clone 
 
 ```
@@ -16,7 +15,7 @@ cd QzoneCollecter
 ```
 ## Start
 
-###安装依赖
+### 安装依赖
 ```
 pip -r requirements.txt
 ```
