@@ -18,9 +18,9 @@ parser.add_argument("-csv","-c",required=False)
 parser.add_argument("-scan","-s",required=False)
 
 args = parser.parse_args()
-if args.xml is not None:
+if args.csv is not None:
     from exporter import export
-    export.export(str(args.xml))
+    export.export(str(args.csv))
     controller.control.ExitRequests("","")
 
 
