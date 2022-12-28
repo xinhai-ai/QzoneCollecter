@@ -49,6 +49,8 @@ pip -r requirements.txt
 可以以html形式导出空间内容
 <br>
 如何获取xml文件
+<br>
+点击view-database.bat打开数据库
 ## Other
 空间数据保存在 archives中
 <br>
