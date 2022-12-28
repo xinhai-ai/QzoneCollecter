@@ -76,8 +76,11 @@ image 和 video 分别保存说说所属的图片及视频
 提供的接口:
 <br>
 logger.logger 提供日志接口，均写入文件,Debug以上的级别输出到控制台
+<br>
 api.client 提供处于登录状态的session
+<br>
 config 可写入配置，具体实现自己看代码
+<br>
 gvar 可配置全局变量
 
 ## 写到最后
